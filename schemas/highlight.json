@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "den.highlight (command)",
+  "type": "object",
+  "required": ["section"],
+  "properties": {
+    "section": { "enum": ["", "persona", "traits", "likes", "dislikes", "nicknames", "memory", "skills", "secrets", "profile"], "description": "\"\" clears every highlight." },
+    "id": { "type": ["string", "number"], "description": "One row: like/dislike text, nickname key, memory ts, skill name, secret name, trait name, or persona field (name | tagline | color). Omit for the whole section." },
+    "color": { "type": "string", "description": "CSS colour; default magenta." },
+    "ttl": { "type": "integer", "minimum": 0, "default": 4000, "description": "Milliseconds; 0 keeps it until cleared." }
+  }
+}

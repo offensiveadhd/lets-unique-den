@@ -1,105 +1,82 @@
-# lets-unique-template — "pulse"
+<p align="center"><img src="icon.svg" width="72" alt=""></p>
+<h1 align="center">den</h1>
+<p align="center"><b>Doto's home.</b><br>The second default <a href="https://github.com/TikoTikTok/lets">lets</a> unique: see everything the companion learned about you, and edit or forget any of it by pointing. Nothing is inferred silently in lets, and den is where you can check that.</p>
 
-A minimal but complete **unique** for [lets](https://github.com/TikoTikTok/lets):
-a full-screen dark-violet mood dial. The human drags a ring to set a value
-0–100 and picks one of three mode chips (calm / focused / wild); the companion
-entity reacts and Claude can move the dial itself. It demonstrates the entire
-unique contract — manifest, guide, static UI, LIP events and commands — in a
-handful of files you can rename and build on.
+---
 
-Use it as a GitHub **template repo**: "Use this template" → name it
-`lets-unique-<name>` → clone → rename `pulse` everywhere (manifest `name`,
-`domains`, event/command types, `data-unique`, `Lets.connect`) → build.
+## Install
 
-## Local development
+It comes with `lets` 0.6.0. The engine installs `den` into `~/.lets/uniques/den` the first time it runs, because it is listed in the engine's `defaults.json`. Then:
 
-Uniques are served by the lets host, never opened from disk. Place this
-folder (copy or symlink) where the host looks for uniques:
+```
+/lets:lets den          # or /lets den with the alias
+```
 
-- project-local: `<project>/.lets/uniques/pulse`
-- or global: `~/.lets/uniques/pulse`
+Manual: `/lets store den` (inspect → confirm), or clone this repo into `~/.lets/uniques/den`, or set `LETS_UNIQUES_DIRS=<parent folder>` while developing. den needs the engine's `GET /lip/entity` (lets ≥ 0.6.0). On an older engine it says so and shows only the persona.
 
-then run the host standalone from the lets repo checkout:
+## What you can do
 
-    node C:/Users/tiko/proj/lets/lets/engine/bin/lets.mjs serve --open pulse
+| card | what it shows and what you can do |
+|---|---|
+| **Persona** | Click his name or tagline to rename him (Enter saves, Esc cancels). Pick one of six colours or the default. *Reset to defaults* asks first. |
+| **Traits** | Six sliders: speed, distance, chatty, playful, formality, curiosity. Each has its two ends spelled out (calm ↔ snappy, quiet ↔ talks…) and a tick at the default. |
+| **Likes, Dislikes** | Chips with ×, and an input to add one. |
+| **Nicknames** | What you call things → what you mean. Edit a value inline, × to forget. |
+| **Memory** | Every line he wrote about you, newest first, with its kind and date. Filter by kind, × to forget a line. |
+| **Special skills** | The playbooks he taught himself: triggers, confidence, uses, the full text. Thumbs up or down, or forget one. |
+| **Secret moves** | Seven dots. The ones you found are lit, and the rest stay a mystery. |
+| **Profile** | How you move: pace, clicks per minute, dwell, idle, menu summons / picks / dismisses, sessions, last seen, favourite screen regions. |
 
-It starts the loopback server, serves the SDK at `/sdk/…`, your folder at
-`/u/pulse/…`, and opens the window. Console errors = something is wrong; the
-quality bar is zero console errors in Chromium/Edge.
+How edits work:
 
-## File layout — what every file is for
+- Every edit is instant and marked **pending** until Claude applies it with the `entity` tool and refreshes the den.
+- If Claude is not listening right then, den says so, and the edit is applied with your next message in Claude Code.
+- **Ctrl+Z** undoes your last edit; Claude gets the inverse and treats it as a no.
 
-    unique.json        the manifest: name, version, entry, domains, events,
-                       commands, permissions. Schema-validated by the host
-                       BEFORE the unique is served. This is the contract.
-    GUIDE.md           prose for Claude: what each event means and how to
-                       react, what commands exist, etiquette. The `open` tool
-                       returns it. Keep it under ~1,200 words.
-    icon.svg           64×64 violet ring shown in listings.
-    ui/index.html     the entry page; <body data-unique="pulse">.
-    ui/app.js         the unique logic: ring drag, chips, LIP wiring.
-    ui/style.css      deep-violet theme; re-declares the --lets-* variables
-                      so it survives a missing shell CSS.
-    LICENSE           MIT.
+The rest of the page:
 
-## How the UI talks LIP
+- **Ask**, or Doto's click menu ("What do you know about me?", "Why this?", "Forget this"), sends a question about the row you are pointing at. Claude answers in the chat panel and highlights what it cites.
+- **Send to Claude** hands everything over for a review. The window closes and Claude answers in Claude Code: a short summary of what Doto knows, stale or contradictory lines, and a cleanup list you can say yes to. Say *continue* to bring den back with the live state.
+- Keyboard: Tab reaches every row. Delete on a focused × forgets, 1–9 jump to a card, `?` lists the shortcuts, and Esc closes things.
 
-Every unique does exactly this (see `ui/app.js`):
+## How Claude drives it
 
-    import { Lets } from '/sdk/lets-client.js';
-    import { Shell } from '/sdk/lets-shell.js';
+Events (up): `den.persona.set`, `den.persona.reset`, `den.like.add|forget`, `den.dislike.add|forget`, `den.nickname.set|forget`, `den.memory.forget`, `den.skill.forget`, `den.skill.rate`, `den.ask`, `den.export`, `den.snapshot`.
+Commands (down): `den.load`, `den.refresh`, `den.highlight`, `den.focus`, `den.snapshot`.
 
-    const lets  = Lets.connect({ unique: 'pulse', version: '0.1.0',
-                                 caps: ['entity', 'chat', 'components'] });
-    const shell = Shell.mount(lets, {
-      root: document.body,
-      context: () => ({ value, mode }),            // what the entity knows
-      quickSuggestions: (ctx) => [{ id: 'explain', label: 'What does this value mean?' }],
-    });
+The manifest's `session` block (`export: den.export`, `snapshot: den.snapshot`, `restore: den.load`) lets the engine save and resume a review.
 
-Checklist your UI must satisfy:
+- [GUIDE.md](GUIDE.md) is what Claude reads when it opens den: which `entity` action applies each event, the commands, the etiquette.
+- [CONTRACT.md](CONTRACT.md) is the behaviour spec.
+- `schemas/` holds JSON Schemas for the entity payload and the main messages.
 
-- `<body data-unique="<name>">` in the entry HTML.
-- Everything is a static ES module; no build step, no CDN, no bundler.
-- Emit events with `lets.emit('<domain>.<thing>', data)` — types must start
-  with a domain you declared in the manifest.
-- Handle your own commands with `lets.on('<domain>.<cmd>', (data, msg) => …)`.
-- Leave `entity.*`, `chat.*`, `component.*`, `ui.*` to the shell — it wires
-  them itself; never re-implement them.
-- Declare permissions (`fs.write`, `net`) honestly in the manifest; the host
-  enforces them and shows them to the user.
+## Layout
 
-## Publishing
+```
+unique.json    LIP manifest (name, entry, domains, events, commands, session, permissions)
+GUIDE.md       instructions for Claude
+CONTRACT.md    behaviour spec
+icon.svg
+schemas/       entity.json (the GET /lip/entity payload), persona.set, ask, load, highlight; unique.schema.json (vendored)
+ui/            index.html, den.js (the home), style.css
+scripts/       validate.mjs — manifest + schema check (zero dependencies)
+```
 
-1. Push your repo to GitHub (public, or a URL the user can clone).
-2. Validate locally:
+The UI imports the engine's SDK at runtime (`/sdk/lets-client.js`, `/sdk/lets-shell.js`). It has no build step and no dependencies, and it stores nothing but two view preferences (collapsed cards, memory filter) in `localStorage`.
 
-       node <lets>/engine/bin/lets.mjs validate <this-folder>
+## Develop
 
-3. Open a PR against the `lets-store` repo adding an entry to its
-   `index.json`:
+```bash
+# from a lets checkout; the registry looks for <dir>/den/unique.json,
+# so point it at the PARENT of a folder named "den" (symlink or junction this repo there)
+LETS_UNIQUES_DIRS=/path/to/parent node engine/bin/lets.mjs serve --open den --verbose
 
-       { "name": "pulse", "title": "Pulse — a dial you talk through",
-         "description": "…", "repo": "https://github.com/you/lets-unique-pulse.git",
-         "ref": "main", "sha": "<commit>", "tags": ["mood", "dial"], "author": "you" }
+node engine/bin/lets.mjs send den.highlight '{"section":"likes","ttl":3000}'   # drive it from the CLI
+node engine/bin/lets.mjs events                                                # drain what den emitted
+```
 
-   Follow that repo's CONTRIBUTING.md checklist. A maintainer reviews the
-   manifest and marks the entry verified.
-
-## The rules
-
-- Static only: the host serves files, it never executes your code.
-- Domains must be yours: `pulse.*` here; never reserved domains
-  (`lip`, `session`, `entity`, `chat`, `component`, `media`, `ui`).
-- Keep `GUIDE.md` short (under ~1,200 words); it is read on every window open.
-- Declare permissions even when empty — `"fs.write": []` means "writes nothing".
-- Bump `version` in the manifest whenever you change events/commands.
-- Want "Send to Claude" semantics (the engine saves the window's state, closes
-  it, and can bring it back with `/lets <name> resume`)? Declare
-  `"session": {"export": "<name>.export", "snapshot": "<name>.snapshot", "restore": "<name>.load"}`
-  in the manifest and make your UI emit the export event and handle the
-  restore command. Without the block the engine assumes exactly those names.
+Validate with `node scripts/validate.mjs` here, or `node engine/bin/lets.mjs validate <this folder>` from the engine.
 
 ## License
 
-MIT — see `LICENSE`.
+MIT © TikoTikTok

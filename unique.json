@@ -1,30 +1,106 @@
 {
   "lip": 1,
-  "name": "pulse",
+  "name": "den",
   "version": "0.1.0",
-  "title": "Pulse — a dial you talk through",
-  "description": "A full-screen mood dial: drag the violet ring to set a value 0–100 and pick a mode chip; the companion reacts.",
+  "title": "Den — Doto's home",
+  "description": "See what the companion learned about you and edit or forget any of it by pointing: persona, traits, likes, nicknames, memory, special skills and the secret moves you found.",
   "entry": "ui/index.html",
   "guide": "GUIDE.md",
   "icon": "icon.svg",
-  "domains": ["pulse"],
-  "capabilities": ["entity", "chat", "components"],
+  "engine": ">=0.6.0",
+  "domains": [
+    "den"
+  ],
+  "capabilities": [
+    "entity",
+    "chat",
+    "components"
+  ],
   "events": {
-    "pulse.value": { "summary": "Human set the dial" },
-    "pulse.mode": { "summary": "Human picked a mode chip" }
+    "den.persona.set": {
+      "summary": "The human renamed him, edited the tagline, settled a trait slider (debounced 250 ms) or picked a colour: {name?, tagline?, traits?:{k:0..1}, color?}",
+      "schema": "schemas/persona.set.json"
+    },
+    "den.persona.reset": {
+      "summary": "The human pressed Reset to defaults and confirmed it in the window: {}"
+    },
+    "den.like.add": {
+      "summary": "The human typed a new like: {text}"
+    },
+    "den.like.forget": {
+      "summary": "The human pressed × on a like: {text}"
+    },
+    "den.dislike.add": {
+      "summary": "The human typed a new dislike: {text}"
+    },
+    "den.dislike.forget": {
+      "summary": "The human pressed × on a dislike: {text}"
+    },
+    "den.nickname.set": {
+      "summary": "The human added or edited a nickname (what they call a thing): {key, value}"
+    },
+    "den.nickname.forget": {
+      "summary": "The human removed a nickname: {key}"
+    },
+    "den.memory.forget": {
+      "summary": "The human pressed × on a memory line: {ts, text} (text = 80-char preview)"
+    },
+    "den.skill.forget": {
+      "summary": "The human removed a special skill: {name}"
+    },
+    "den.skill.rate": {
+      "summary": "Thumbs up or down on a special skill: {name, ok}"
+    },
+    "den.ask": {
+      "summary": "Ask, or a question from Doto's menu: {question, about:{section, id?, text?}, entity}; about is the row they were looking at",
+      "schema": "schemas/ask.json"
+    },
+    "den.export": {
+      "summary": "\"Send to Claude\": everything he knows, for review: {entity, pending?}. The engine saves it as a session and closes the window (handoff); answer in the transcript."
+    },
+    "den.snapshot": {
+      "summary": "Answer to the den.snapshot command (re = command id): {entity, pending?}"
+    }
   },
   "commands": {
-    "pulse.set": { "summary": "Move the dial (animated)" },
-    "pulse.glow": { "summary": "Pulse the ring in a color" }
+    "den.load": {
+      "summary": "Render this payload: {entity, merge?}; merge:true patches only the sections present. Clears pending marks on rows that now match.",
+      "schema": "schemas/load.json"
+    },
+    "den.refresh": {
+      "summary": "Re-fetch GET /lip/entity and render it; clears every pending mark"
+    },
+    "den.highlight": {
+      "summary": "Glow a section or one row: {section, id?, color?, ttl?}; ttl default 4000, 0 keeps, section \"\" clears",
+      "schema": "schemas/highlight.json"
+    },
+    "den.focus": {
+      "summary": "Scroll a section into view: {section}"
+    },
+    "den.snapshot": {
+      "summary": "Ask the den for its current payload; it replies with a den.snapshot event"
+    }
   },
   "permissions": {
     "fs.write": [],
     "net": []
   },
+  "session": {
+    "export": "den.export",
+    "snapshot": "den.snapshot",
+    "restore": "den.load"
+  },
   "author": {
-    "name": "your-name",
-    "url": "https://github.com/your-name"
+    "name": "TikoTikTok",
+    "url": "https://github.com/TikoTikTok"
   },
   "license": "MIT",
-  "repository": "https://github.com/your-name/lets-unique-pulse"
+  "repository": "https://github.com/TikoTikTok/lets-unique-den",
+  "tags": [
+    "companion",
+    "memory",
+    "persona",
+    "skills",
+    "default"
+  ]
 }

@@ -1,27 +1,233 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pulse — a dial you talk through</title>
-  <link rel="stylesheet" href="/sdk/lets-shell.css" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Den — lets</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/sdk/lets-shell.css">
+  <link rel="stylesheet" href="./style.css">
 </head>
-<body data-unique="pulse">
-  <main class="pulse-stage">
-    <svg class="pulse-ring" viewBox="0 0 260 260" aria-label="Mood dial, drag to set a value" role="slider" id="dial">
-      <circle class="track" cx="130" cy="130" r="104" />
-      <circle class="arc" id="arc" cx="130" cy="130" r="104" />
-      <circle class="knob" id="knob" cx="130" cy="26" r="11" />
-      <text class="value" id="valueText" x="130" y="140" text-anchor="middle">50</text>
-      <text class="hint" x="130" y="166" text-anchor="middle">drag the ring</text>
-    </svg>
-    <div class="chips" id="chips">
-      <button class="chip" data-mode="calm">calm</button>
-      <button class="chip" data-mode="focused">focused</button>
-      <button class="chip" data-mode="wild">wild</button>
+<body data-unique="den">
+<main id="app" class="den">
+  <div id="home" class="home">
+    <div class="col">
+
+      <header id="topbar" class="topbar glass">
+        <nav id="toolbar" class="toolbar" role="toolbar" aria-label="Den tools">
+          <div class="tb-brand" title="den · lets">
+            <span id="status-dot" class="tb-dot" data-status="connecting" role="img" aria-label="Connecting to Claude"></span>
+            <span class="tb-name">den</span>
+          </div>
+
+          <div class="tb-group" role="group" aria-label="Claude">
+            <button type="button" class="tb-btn tb-text" id="btn-refresh" data-act="refresh" title="Fetch what he knows again" aria-label="Refresh">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 4.5v4h-4"/></svg>
+              <span>Refresh</span>
+            </button>
+            <button type="button" class="tb-btn tb-text" id="btn-ask" data-act="ask" aria-expanded="false" aria-controls="ask" title="Ask Claude about the line you point at" aria-label="Ask Claude">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 1 19 17h-7l-4.5 3.5V17H5a1.5 1.5 0 0 1-1.5-1.5V7A1.5 1.5 0 0 1 5 5.5z"/><path d="M10 9.4a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6.9v.4M12 14.3v.1"/></svg>
+              <span>Ask</span>
+            </button>
+            <button type="button" class="tb-btn tb-primary" id="btn-send" data-act="send" title="Send everything he knows to Claude for a review" aria-label="Send to Claude">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 11.5 16-7-6.5 16-2.5-6.5z"/><path d="m11 14 9-9.5"/></svg>
+              <span>Send to Claude</span>
+            </button>
+          </div>
+
+          <div class="tb-group tb-end" role="group" aria-label="Panels">
+            <button type="button" class="tb-btn" id="btn-undo" data-act="undo" title="Undo your last edit (Ctrl+Z)" aria-label="Undo" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5 4.5 11 9 15.5"/><path d="M5 11h9.5a5 5 0 0 1 0 10H12"/></svg>
+            </button>
+            <button type="button" class="tb-btn" data-act="chat" title="Toggle chat (Ctrl+/)" aria-label="Toggle chat">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h11a1.5 1.5 0 0 1 1.5 1.5v6A1.5 1.5 0 0 1 15 14.5H9l-3.5 3v-3H4A1.5 1.5 0 0 1 2.5 13V7A1.5 1.5 0 0 1 4 5.5z"/><path d="M16.5 9H20a1.5 1.5 0 0 1 1.5 1.5v6A1.5 1.5 0 0 1 20 18h-1v2.5L16 18h-4.5"/></svg>
+            </button>
+            <button type="button" class="tb-btn" data-act="entity" title="Show or hide your companion (Ctrl+Space)" aria-label="Toggle companion">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12.5" r="7"/><path d="M9.6 11.3v1.8M14.4 11.3v1.8"/><path d="M5 5.5a9.8 9.8 0 0 1 14 0" stroke-opacity=".5"/></svg>
+            </button>
+            <button type="button" class="tb-btn" id="btn-help" data-act="help" aria-expanded="false" aria-controls="help" title="Shortcuts (?)" aria-label="Keyboard shortcuts">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .8-1 1.4v.5M12 16.6v.1"/></svg>
+            </button>
+          </div>
+        </nav>
+
+        <form id="ask" class="ask" hidden autocomplete="off">
+          <div class="ask-about" id="ask-about-row" hidden>
+            <span class="lets-dim">about</span>
+            <span id="ask-about" class="ask-chip"></span>
+            <button type="button" class="lets-icon-btn ask-about-x" id="ask-about-x" aria-label="Ask about the whole den instead">×</button>
+          </div>
+          <div class="ask-row">
+            <label for="ask-input" class="sr-only">Question for Claude</label>
+            <input id="ask-input" type="text" maxlength="500" placeholder="Ask Claude about what he knows…">
+            <button type="submit" class="tb-btn tb-primary"><span>Ask</span></button>
+          </div>
+        </form>
+      </header>
+
+      <p class="lede" id="lede">Everything I know about you. Fix a line or forget it.</p>
+
+      <section class="card glass" data-section="persona" id="sec-persona" aria-labelledby="h-persona">
+        <header class="card-head">
+          <h2 id="h-persona"><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-persona"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg><span>Persona</span></button></h2>
+          <span class="card-count" id="count-persona"></span>
+        </header>
+        <div class="card-body" id="body-persona">
+          <div class="persona">
+            <div class="p-orb" id="p-orb" aria-hidden="true"><i></i><i></i></div>
+            <div class="p-main">
+              <div class="p-field" data-row="persona:name" data-label="name">
+                <button type="button" id="p-name" class="p-name editable" aria-label="Name: Doto. Press Enter to rename.">Doto</button>
+              </div>
+              <div class="p-field" data-row="persona:tagline" data-label="tagline">
+                <button type="button" id="p-tagline" class="p-tagline editable" aria-label="Tagline. Press Enter to edit.">a dot that does</button>
+              </div>
+              <p class="p-meta" id="p-meta">—</p>
+            </div>
+          </div>
+          <div class="p-colors" data-row="persona:color" data-label="colour">
+            <span class="p-label" id="colors-label">Colour</span>
+            <div class="swatches" id="swatches" role="group" aria-labelledby="colors-label"></div>
+          </div>
+          <div class="p-reset">
+            <button type="button" class="lets-btn lets-btn-sm lets-btn-ghost" id="btn-reset">Reset to defaults</button>
+            <span id="reset-confirm" class="reset-confirm" hidden>
+              <span>Sure? Name, tagline, colour and traits go back.</span>
+              <button type="button" class="lets-btn lets-btn-sm lets-btn-primary" id="btn-reset-yes">Reset</button>
+              <button type="button" class="lets-btn lets-btn-sm lets-btn-ghost" id="btn-reset-no">Keep</button>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card glass" data-section="traits" id="sec-traits" aria-labelledby="h-traits">
+        <header class="card-head">
+          <h2 id="h-traits"><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-traits"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg><span>Traits</span></button></h2>
+          <span class="card-count" id="count-traits"></span>
+        </header>
+        <div class="card-body" id="body-traits">
+          <div class="traits" id="traits"></div>
+        </div>
+      </section>
+
+      <section class="card glass" data-section="likes" id="sec-likes" aria-labelledby="h-likes">
+        <header class="card-head">
+          <h2 id="h-likes"><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-likes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg><span>Likes</span></button></h2>
+          <span class="card-count" id="count-likes"></span>
+        </header>
+        <div class="card-body" id="body-likes">
+          <ul class="chips" id="list-likes" aria-label="Likes"></ul>
+          <p class="empty" id="empty-likes" hidden>Nothing yet. Open graph and do something he can notice.</p>
+          <form class="add-form" data-add="likes" autocomplete="off">
+            <label class="sr-only" for="add-likes">Add a like</label>
+            <input id="add-likes" type="text" maxlength="60" placeholder="Add a like…">
+            <button type="submit" class="lets-btn lets-btn-sm">Add</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="card glass" data-section="dislikes" id="sec-dislikes" aria-labelledby="h-dislikes">
+        <header class="card-head">
+          <h2 id="h-dislikes"><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-dislikes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg><span>Dislikes</span></button></h2>
+          <span class="card-count" id="count-dislikes"></span>
+        </header>
+        <div class="card-body" id="body-dislikes">
+          <ul class="chips" id="list-dislikes" aria-label="Dislikes"></ul>
+          <p class="empty" id="empty-dislikes" hidden>Nothing yet. Open graph and do something he can notice.</p>
+          <form class="add-form" data-add="dislikes" autocomplete="off">
+            <label class="sr-only" for="add-dislikes">Add a dislike</label>
+            <input id="add-dislikes" type="text" maxlength="60" placeholder="Add a dislike…">
+            <button type="submit" class="lets-btn lets-btn-sm">Add</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="card glass" data-section="nicknames" id="sec-nicknames" aria-labelledby="h-nicknames">
+        <header class="card-head">
+          <h2 id="h-nicknames"><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-nicknames"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg><span>Nicknames</span></button></h2>
+          <span class="card-count" id="count-nicknames"></span>
+        </header>
+        <div class="card-body" id="body-nicknames">
+          <ul class="nicks" id="list-nicknames" aria-label="Nicknames"></ul>
+          <p class="empty" id="empty-nicknames" hidden>No nicknames yet. Add what you call things.</p>
+          <form class="add-form add-nick" data-add="nicknames" autocomplete="off">
+            <label class="sr-only" for="add-nick-key">You say</label>
+            <input id="add-nick-key" type="text" maxlength="60" placeholder="You say…">
+            <span class="nick-arrow" aria-hidden="true">→</span>
+            <label class="sr-only" for="add-nick-value">You mean</label>
+            <input id="add-nick-value" type="text" maxlength="120" placeholder="You mean…">
+            <button type="submit" class="lets-btn lets-btn-sm">Add</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="card glass" data-section="memory" id="sec-memory" aria-labelledby="h-memory">
+        <header class="card-head">
+          <h2 id="h-memory"><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-memory"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg><span>Memory</span></button></h2>
+          <span class="card-count" id="count-memory"></span>
+        </header>
+        <div class="card-body" id="body-memory">
+          <div class="filters" id="mem-filters" role="group" aria-label="Show memory lines of kind"></div>
+          <ol class="mem" id="list-memory" aria-label="Memory lines, newest first"></ol>
+          <p class="empty" id="empty-memory" hidden>No memory lines yet. He writes one when something is worth keeping.</p>
+        </div>
+      </section>
+
+      <section class="card glass" data-section="skills" id="sec-skills" aria-labelledby="h-skills">
+        <header class="card-head">
+          <h2 id="h-skills"><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-skills"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg><span>Special skills</span></button></h2>
+          <span class="card-count" id="count-skills"></span>
+        </header>
+        <div class="card-body" id="body-skills">
+          <div class="skills" id="list-skills"></div>
+          <p class="empty" id="empty-skills" hidden>No special skills yet. He writes one when he learns a trick.</p>
+        </div>
+      </section>
+
+      <section class="card glass" data-section="secrets" id="sec-secrets" aria-labelledby="h-secrets">
+        <header class="card-head">
+          <h2 id="h-secrets"><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-secrets"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg><span>Secret moves</span></button></h2>
+          <span class="card-count" id="count-secrets"></span>
+        </header>
+        <div class="card-body" id="body-secrets">
+          <ol class="secrets" id="list-secrets" aria-label="Secret moves"></ol>
+        </div>
+      </section>
+
+      <section class="card glass" data-section="profile" id="sec-profile" aria-labelledby="h-profile">
+        <header class="card-head">
+          <h2 id="h-profile"><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-profile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg><span>Profile</span></button></h2>
+          <span class="card-count" id="count-profile"></span>
+        </header>
+        <div class="card-body" id="body-profile">
+          <div class="tiles" id="tiles"></div>
+        </div>
+      </section>
+
+      <p class="foot lets-dim">Nothing here is guessed. Every line is on disk in <code>~/.lets/entity</code>.</p>
     </div>
-  </main>
-  <script type="module" src="app.js"></script>
+  </div>
+
+  <section id="help" class="help glass" hidden aria-label="Keyboard shortcuts">
+    <h2>Shortcuts</h2>
+    <dl>
+      <dt>Tab · Shift+Tab</dt><dd>move between rows and buttons</dd>
+      <dt>Enter</dt><dd>on the name, tagline or a nickname: edit it · Esc cancels</dd>
+      <dt>Delete · Backspace</dt><dd>on a focused ×: forget that line</dd>
+      <dt>Arrows · PageUp/Down</dt><dd>move a focused trait slider</dd>
+      <dt>1 – 9</dt><dd>jump to a card</dd>
+      <dt>Ctrl+Z</dt><dd>undo your last edit (Claude gets the inverse)</dd>
+      <dt>?</dt><dd>this list</dd>
+      <dt>Esc</dt><dd>close editors and this list</dd>
+      <dt>Right-click · Ctrl+Space</dt><dd>call your companion</dd>
+      <dt>Ctrl+/</dt><dd>chat with Claude</dd>
+    </dl>
+  </section>
+
+  <div id="d-toast" class="d-toast" role="status" aria-live="polite"></div>
+  <div id="sr-live" class="sr-only" aria-live="polite"></div>
+</main>
+<script type="module" src="./den.js"></script>
 </body>
 </html>

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "den.ask (event)",
+  "type": "object",
+  "required": ["question", "about", "entity"],
+  "properties": {
+    "question": { "type": "string", "minLength": 1, "maxLength": 500 },
+    "about": {
+      "type": "object",
+      "description": "What the human was looking at: the hovered or focused row, a whole section, or section \"\" for the whole den.",
+      "required": ["section"],
+      "properties": {
+        "section": { "enum": ["", "persona", "traits", "likes", "dislikes", "nicknames", "memory", "skills", "secrets", "profile"] },
+        "id": { "type": ["string", "number"], "description": "like/dislike text, nickname key, memory ts, skill name, secret name, trait or persona field" },
+        "text": { "type": "string", "maxLength": 200, "description": "what the row says (a preview)" }
+      }
+    },
+    "entity": { "$ref": "entity.json" }
+  }
+}

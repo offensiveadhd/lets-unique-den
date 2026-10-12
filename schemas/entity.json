@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/TikoTikTok/lets-unique-den/schemas/entity.json",
+  "title": "den entity payload (GET /lip/entity, entity {action:\"full\"})",
+  "description": "Everything the companion knows about the human. Any field may be null when nothing was measured yet.",
+  "type": "object",
+  "properties": {
+    "persona": {
+      "type": ["object", "null"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "tagline": { "type": ["string", "null"], "maxLength": 120 },
+        "born": { "type": ["string", "null"], "description": "ISO date" },
+        "color": { "type": ["string", "null"], "description": "CSS colour of the companion's tint" },
+        "mood": { "type": ["string", "null"] },
+        "sessions": { "type": ["integer", "null"], "minimum": 0 },
+        "traits": { "$ref": "#/$defs/traits" },
+        "likes": { "type": ["array", "null"], "items": { "type": "string" } },
+        "dislikes": { "type": ["array", "null"], "items": { "type": "string" } },
+        "nicknames": { "type": ["object", "null"], "additionalProperties": { "type": "string" }, "description": "what the human says -> what they mean" }
+      }
+    },
+    "profile": {
+      "type": ["object", "null"],
+      "properties": {
+        "pace": { "type": ["number", "null"], "description": "pointer speed, px/s" },
+        "clickRate": { "type": ["number", "null"], "description": "clicks per minute" },
+        "dwell": { "type": ["number", "null"], "description": "median gap between actions, ms" },
+        "idleMs": { "type": ["number", "null"] },
+        "regions": {
+          "type": ["object", "null"],
+          "properties": { "tl": { "type": "number" }, "tr": { "type": "number" }, "bl": { "type": "number" }, "br": { "type": "number" }, "c": { "type": "number" } }
+        },
+        "sessionsSeen": { "type": ["integer", "null"] },
+        "summons": { "type": ["integer", "null"] },
+        "picks": { "type": ["integer", "null"] },
+        "dismisses": { "type": ["integer", "null"] },
+        "lastSeen": { "type": ["number", "null"], "description": "epoch ms" },
+        "secrets": { "type": ["array", "null"], "items": { "type": "string" }, "description": "secret moves found, in order of discovery" }
+      }
+    },
+    "skills": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "title": { "type": ["string", "null"] },
+          "triggers": { "type": ["array", "null"], "items": { "type": "string" } },
+          "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+          "uses": { "type": ["integer", "null"] },
+          "unique": { "type": ["string", "null"] },
+          "learned": { "type": ["string", "null"] },
+          "updated": { "type": ["string", "null"] },
+          "body": { "type": ["string", "null"], "description": "markdown playbook" }
+        }
+      }
+    },
+    "memory": {
+      "type": ["array", "null"],
+      "description": "oldest -> newest, the last 60 lines; ts is the id of a line",
+      "items": {
+        "type": "object",
+        "required": ["ts", "text"],
+        "properties": {
+          "ts": { "type": "number" },
+          "kind": { "type": ["string", "null"], "description": "note | preference | habit | request | style | secret | skill" },
+          "text": { "type": "string" },
+          "weight": { "type": ["number", "null"] }
+        }
+      }
+    },
+    "secretsAll": { "type": ["array", "null"], "items": { "type": "string" } },
+    "defaults": {
+      "type": ["object", "null"],
+      "properties": {
+        "name": { "type": "string" },
+        "tagline": { "type": "string" },
+        "color": { "type": "string" },
+        "traits": { "$ref": "#/$defs/traits" }
+      }
+    },
+    "at": { "type": ["number", "null"], "description": "epoch ms when the payload was built" }
+  },
+  "$defs": {
+    "trait": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+    "traits": {
+      "type": ["object", "null"],
+      "properties": {
+        "speed": { "$ref": "#/$defs/trait" },
+        "distance": { "$ref": "#/$defs/trait" },
+        "chatty": { "$ref": "#/$defs/trait" },
+        "playful": { "$ref": "#/$defs/trait" },
+        "formality": { "$ref": "#/$defs/trait" },
+        "curiosity": { "$ref": "#/$defs/trait" }
+      }
+    }
+  }
+}

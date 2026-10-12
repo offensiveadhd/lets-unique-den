@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "den.persona.set (event)",
+  "description": "Only the fields the human changed. Apply with entity {action:\"set\", ...}.",
+  "type": "object",
+  "minProperties": 1,
+  "properties": {
+    "name": { "type": "string", "minLength": 1, "maxLength": 24 },
+    "tagline": { "type": "string", "maxLength": 120 },
+    "color": { "type": "string", "description": "CSS colour: one of the six swatches, or the default colour" },
+    "traits": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "speed": { "type": "number", "minimum": 0, "maximum": 1 },
+        "distance": { "type": "number", "minimum": 0, "maximum": 1 },
+        "chatty": { "type": "number", "minimum": 0, "maximum": 1 },
+        "playful": { "type": "number", "minimum": 0, "maximum": 1 },
+        "formality": { "type": "number", "minimum": 0, "maximum": 1 },
+        "curiosity": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,10 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" rx="14" fill="#120b1f"/>
-  <circle cx="32" cy="32" r="22" fill="none" stroke="#3a2a63" stroke-width="6"/>
-  <circle cx="32" cy="32" r="22" fill="none" stroke="#a66bff" stroke-width="6"
-          stroke-linecap="round" stroke-dasharray="138.2" stroke-dashoffset="104"
-          transform="rotate(-90 32 32)"/>
-  <circle cx="32" cy="10" r="5" fill="#ff6bd6"/>
-  <circle cx="32" cy="32" r="7" fill="#a66bff"/>
-  <circle cx="29.5" cy="29.5" r="2.2" fill="#ece6ff" opacity="0.9"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="den">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="70%">
+      <stop offset="0" stop-color="#2b1a52"/>
+      <stop offset="1" stop-color="#120b1f"/>
+    </radialGradient>
+    <radialGradient id="orb" cx="38%" cy="32%" r="75%">
+      <stop offset="0" stop-color="#e3ccff"/>
+      <stop offset=".45" stop-color="#a66bff"/>
+      <stop offset="1" stop-color="#5a2fb0"/>
+    </radialGradient>
+    <linearGradient id="roof" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c49bff"/>
+      <stop offset="1" stop-color="#ff8fe0"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#bg)"/>
+  <rect x=".75" y=".75" width="62.5" height="62.5" rx="14.25" fill="none" stroke="#5a44a0" stroke-opacity=".6" stroke-width="1.5"/>
+  <!-- the den: a soft house outline -->
+  <g filter="url(#glow)" fill="none" stroke="url(#roof)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 30 L32 14 L50 30"/>
+    <path d="M19 27 V48 a3 3 0 0 0 3 3 H42 a3 3 0 0 0 3 -3 V27"/>
+  </g>
+  <!-- the glow of home -->
+  <ellipse cx="32" cy="46" rx="9" ry="2.4" fill="#a66bff" fill-opacity=".28"/>
+  <!-- Doto, at home -->
+  <g filter="url(#glow)">
+    <circle cx="32" cy="37" r="7.5" fill="url(#orb)"/>
+  </g>
+  <circle cx="29.6" cy="34.4" r="1.9" fill="#fff" fill-opacity=".75"/>
+  <circle cx="29.3" cy="37.6" r="1.1" fill="#120b1f"/>
+  <circle cx="34.7" cy="37.6" r="1.1" fill="#120b1f"/>
 </svg>

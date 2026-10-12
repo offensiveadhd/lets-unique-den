@@ -1,0 +1,10 @@
+{
+  "name": "lets-unique-den",
+  "version": "0.1.0",
+  "description": "den — Doto's home: see what the lets companion learned about you and edit or forget any of it.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "scripts": { "validate": "node scripts/validate.mjs" },
+  "repository": { "type": "git", "url": "https://github.com/TikoTikTok/lets-unique-den.git" }
+}

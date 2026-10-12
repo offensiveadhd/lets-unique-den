@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "den.load (command)",
+  "description": "Also the restore command on resume; a resumed den then re-fetches the live state.",
+  "type": "object",
+  "required": ["entity"],
+  "properties": {
+    "entity": { "$ref": "entity.json" },
+    "merge": { "type": "boolean", "default": false, "description": "true: patch only the sections present (persona fields merge one by one); false: replace everything." }
+  }
+}
