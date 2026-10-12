@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pulse — a dial you talk through</title>
+  <link rel="stylesheet" href="/sdk/lets-shell.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-unique="pulse">
+  <main class="pulse-stage">
+    <svg class="pulse-ring" viewBox="0 0 260 260" aria-label="Mood dial, drag to set a value" role="slider" id="dial">
+      <circle class="track" cx="130" cy="130" r="104" />
+      <circle class="arc" id="arc" cx="130" cy="130" r="104" />
+      <circle class="knob" id="knob" cx="130" cy="26" r="11" />
+      <text class="value" id="valueText" x="130" y="140" text-anchor="middle">50</text>
+      <text class="hint" x="130" y="166" text-anchor="middle">drag the ring</text>
+    </svg>
+    <div class="chips" id="chips">
+      <button class="chip" data-mode="calm">calm</button>
+      <button class="chip" data-mode="focused">focused</button>
+      <button class="chip" data-mode="wild">wild</button>
+    </div>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

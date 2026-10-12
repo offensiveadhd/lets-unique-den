@@ -1,0 +1,124 @@
+/* pulse — style.css
+   Deep-violet theme. The --lets-* variables are redefined here so the dial
+   still looks right even if the shell CSS (/sdk/lets-shell.css) is missing;
+   the shell's own definitions win where both load. */
+
+:root {
+  --lets-bg: #120b1f;          /* page */
+  --lets-bg-2: #1a1030;        /* panels */
+  --lets-bg-3: #241746;        /* cards, nodes */
+  --lets-line: #3a2a63;        /* borders, edges */
+  --lets-line-2: #5a44a0;      /* hover borders */
+  --lets-fg: #ece6ff;          /* text */
+  --lets-fg-dim: #a99cd0;      /* secondary text */
+  --lets-accent: #a66bff;      /* primary accent (violet) */
+  --lets-accent-2: #ff6bd6;    /* magenta accent */
+  --lets-accent-3: #6bf0ff;    /* cyan accent, selection glow */
+  --lets-ok: #5ef2a6; --lets-warn: #ffd166; --lets-err: #ff6b8b;
+  --lets-glow: 0 0 24px rgba(166,107,255,.45);
+  --lets-radius: 12px;
+  --lets-font: ui-sans-serif, "Segoe UI", Inter, system-ui, sans-serif;
+  --lets-mono: ui-monospace, "Cascadia Code", Consolas, monospace;
+  --glow-color: var(--lets-accent);
+}
+
+* { box-sizing: border-box; }
+
+body[data-unique="pulse"] {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(1px 1px at 12px 12px, #2a1b4d 50%, transparent 51%) 0 0 / 24px 24px,
+    var(--lets-bg);
+  color: var(--lets-fg);
+  font-family: var(--lets-font);
+}
+
+.pulse-stage {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.pulse-ring {
+  width: min(64vmin, 420px);
+  height: min(64vmin, 420px);
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+  filter: drop-shadow(0 0 18px rgba(166,107,255,.35));
+}
+.pulse-ring:active { cursor: grabbing; }
+.pulse-ring:focus-visible { filter: drop-shadow(0 0 18px var(--lets-accent-3)); }
+
+.pulse-ring .track {
+  fill: none;
+  stroke: var(--lets-line);
+  stroke-width: 14;
+}
+
+.pulse-ring .arc {
+  fill: none;
+  stroke: var(--glow-color);
+  stroke-width: 14;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 130px 130px;
+  transition: stroke 120ms ease;
+}
+
+.pulse-ring .knob {
+  fill: var(--glow-color);
+  stroke: var(--lets-fg);
+  stroke-width: 2;
+  transition: fill 120ms ease;
+}
+
+.pulse-ring.glowing .arc,
+.pulse-ring.glowing .knob {
+  filter: drop-shadow(0 0 14px var(--glow-color));
+}
+
+.pulse-ring .value {
+  fill: var(--lets-fg);
+  font-size: 56px;
+  font-weight: 700;
+  user-select: none;
+}
+
+.pulse-ring .hint {
+  fill: var(--lets-fg-dim);
+  font-size: 15px;
+  user-select: none;
+}
+
+.chips {
+  display: flex;
+  gap: 12px;
+}
+
+.chip {
+  appearance: none;
+  cursor: pointer;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--lets-line);
+  background: var(--lets-bg-2);
+  color: var(--lets-fg-dim);
+  font: 15px var(--lets-font);
+  transition: border-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+.chip:hover { border-color: var(--lets-line-2); color: var(--lets-fg); }
+.chip.active {
+  border-color: var(--lets-accent);
+  color: var(--lets-fg);
+  box-shadow: var(--lets-glow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}

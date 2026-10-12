@@ -1,0 +1,30 @@
+{
+  "lip": 1,
+  "name": "pulse",
+  "version": "0.1.0",
+  "title": "Pulse — a dial you talk through",
+  "description": "A full-screen mood dial: drag the violet ring to set a value 0–100 and pick a mode chip; the companion reacts.",
+  "entry": "ui/index.html",
+  "guide": "GUIDE.md",
+  "icon": "icon.svg",
+  "domains": ["pulse"],
+  "capabilities": ["entity", "chat", "components"],
+  "events": {
+    "pulse.value": { "summary": "Human set the dial" },
+    "pulse.mode": { "summary": "Human picked a mode chip" }
+  },
+  "commands": {
+    "pulse.set": { "summary": "Move the dial (animated)" },
+    "pulse.glow": { "summary": "Pulse the ring in a color" }
+  },
+  "permissions": {
+    "fs.write": [],
+    "net": []
+  },
+  "author": {
+    "name": "your-name",
+    "url": "https://github.com/your-name"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/your-name/lets-unique-pulse"
+}
