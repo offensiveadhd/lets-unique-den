@@ -91,11 +91,11 @@
     "restore": "den.load"
   },
   "author": {
-    "name": "TikoTikTok",
-    "url": "https://github.com/TikoTikTok"
+    "name": "offensiveadhd",
+    "url": "https://github.com/offensiveadhd"
   },
   "license": "MIT",
-  "repository": "https://github.com/TikoTikTok/lets-unique-den",
+  "repository": "https://github.com/offensiveadhd/lets-unique-den",
   "tags": [
     "companion",
     "memory",

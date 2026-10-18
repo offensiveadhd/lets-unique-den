@@ -1,6 +1,6 @@
 <p align="center"><img src="icon.svg" width="72" alt=""></p>
 <h1 align="center">den</h1>
-<p align="center"><b>Doto's home.</b><br>The second default <a href="https://github.com/TikoTikTok/lets">lets</a> unique: see everything the companion learned about you, and edit or forget any of it by pointing. Nothing is inferred silently in lets, and den is where you can check that.</p>
+<p align="center"><b>Doto's home.</b><br>The second default <a href="https://github.com/offensiveadhd/lets">lets</a> unique: see everything the companion learned about you, and edit or forget any of it by pointing. Nothing is inferred silently in lets, and den is where you can check that.</p>
 
 ---
 
@@ -79,4 +79,4 @@ Validate with `node scripts/validate.mjs` here, or `node engine/bin/lets.mjs val
 
 ## License
 
-MIT © TikoTikTok
+MIT © offensiveadhd

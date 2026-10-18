@@ -1,6 +1,6 @@
 # den — build contract
 
-The behaviour spec of Doto's home. The shell (companion, chat, components, toasts) and the theme are defined by the engine: see [docs/UI-CONTRACT.md](https://github.com/TikoTikTok/lets/blob/main/docs/UI-CONTRACT.md) in the lets repo. Engine requirement: lets **0.6.0** (`GET /lip/entity` and the `entity` actions `full / set / unlearn / memory / reset`).
+The behaviour spec of Doto's home. The shell (companion, chat, components, toasts) and the theme are defined by the engine: see [docs/UI-CONTRACT.md](https://github.com/offensiveadhd/lets/blob/main/docs/UI-CONTRACT.md) in the lets repo. Engine requirement: lets **0.6.0** (`GET /lip/entity` and the `entity` actions `full / set / unlearn / memory / reset`).
 
 ## 1 Data
 

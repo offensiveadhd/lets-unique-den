@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/TikoTikTok/lets-unique-den/schemas/entity.json",
+  "$id": "https://github.com/offensiveadhd/lets-unique-den/schemas/entity.json",
   "title": "den entity payload (GET /lip/entity, entity {action:\"full\"})",
   "description": "Everything the companion knows about the human. Any field may be null when nothing was measured yet.",
   "type": "object",
